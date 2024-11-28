@@ -3,14 +3,8 @@
 #include <QMainWindow>
 #define RED 0
 #define BLACK 1
-const static int max_x =32;
-const static int max_y =52;
-const static int grid_width=57;
 const static int radius=28;
-
-//extern int board[10][9];//棋盘
 class Chesspiece;//前向声明
-//extern Chesspiece *pieces[10][9];//棋子
 class ChessBoard : public QMainWindow
 {
     Q_OBJECT

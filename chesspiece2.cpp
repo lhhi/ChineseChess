@@ -41,8 +41,7 @@ void chesspiece2::generate_move(std::vector<moveway>& move,ChessBoard& w){
         int dx=this->x+dir[i][0];
         int dy=this->y+dir[i][1];
         while (Canmove(w,dx,dy)) {
-            //qDebug()<<dx<<dy;
-            chessmove::moveadd(move,x,y,dx,dy);
+            chessmove::moveadd(move,this->x,this->y,dx,dy);
             dx+=dir[i][0];
             dy+=dir[i][1];
         }

@@ -8,12 +8,13 @@ class SearchEngine
 {
 public:
     SearchEngine();
-    Chesspiece *Makemove(ChessBoard&,moveway& move,int);
-    void Unmakemove(ChessBoard&,moveway& move,Chesspiece*,int);
+    Chesspiece *Makemove(ChessBoard&,moveway& move);
+    void Unmakemove(ChessBoard&,moveway& move,Chesspiece*);
     bool isGameover(ChessBoard&);
     int evaluate(ChessBoard&,int);
     int search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX);
     moveway aimode(ChessBoard& w,int deep);
+    int values[15]={0,0,500,300,300,250,250,80,0,500,300,300,250,250,80};
     int positionvalue[15][10][9]={
         {{0,0,0,0,0,0,0,0,0},
          {0,0,0,0,0,0,0,0,0},
@@ -101,7 +102,7 @@ public:
          {20,27,30,40,42,40,30,27,20},
          {20,30,45,55,55,55,45,30,20},
          {20,30,50,65,70,65,50,30,20},
-         {0,0,0,2,4,2,0,0,0}},
+         {0,0,0,70,80,70,0,0,0}},
 
         {{0, 0, 0,  0,  0,  0, 0, 0, 0},
          {0, 0, 0,  0,  0,  0, 0, 0, 0},
@@ -169,7 +170,7 @@ public:
          {0,0,0,0,0,0,0,0,0},
          {0,0,0,0,0,0,0,0,0}},
 
-        {{ 0,  0,  0,  2,  4,  2,  0,  0,  0},
+        {{ 0,  0,  0,  70,  80,  70,  0,  0,  0},
          {20, 30, 50, 65, 70, 65, 50, 30, 20},
          {20, 30, 45, 55, 55, 55, 45, 30, 20},
          {20, 27, 30, 40, 42, 40, 30, 27, 20},

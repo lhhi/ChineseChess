@@ -21,89 +21,47 @@ ChessBoard::ChessBoard(QWidget *parent)
 }
 
 void ChessBoard::init(){
-    for(int i=0;i<10;i++){
-        for(int j=0;j<9;j++){
-            board[i][j]=board_1[i][j];
-        }
-    }
-    //flag=0;
-    //selected_piece=NULL;
-    priority=1;
+    for(int i=0;i<10;i++)
+    for(int j=0;j<9;j++)
+    board[i][j]=board_1[i][j];
     for(int i=0;i<10;i++){
         for(int j=0;j<9;j++){
             int id=board[i][j];
-            if(id==0){
-                pieces[i][j]=NULL;
-                continue;
-            }
+            if(id==0){ pieces[i][j]=NULL;continue; }
             pieces[i][j]=getpiece(id);
             pieces[i][j]->x=i;
             pieces[i][j]->y=j;
             pieces[i][j]->id=id;
-            if(id>0&&id<=7) pieces[i][j]->color=0;
-            if(id>7&&id<=14) pieces[i][j]->color=1;//获取棋子并设置初始值
+            if(id>0&&id<=7) pieces[i][j]->color=RED;
+            if(id>7&&id<=14) pieces[i][j]->color=BLACK;//获取棋子并设置初始值
         }
     }
 }//棋盘的初始化
 
 //上锁
-inline void ChessBoard::unlock(){
-    flag=0;
-    selected_piece=NULL;
-}
+inline void ChessBoard::unlock(){ flag=0; selected_piece=NULL;}
 
 //解锁
-inline void ChessBoard::lock(Chesspiece* p){
-    selected_piece=p;
-    flag=1;
-}
+inline void ChessBoard::lock(Chesspiece* p){ selected_piece=p; flag=1;}
 
 //获取棋子函数
 Chesspiece *ChessBoard::getpiece(int id){
     Chesspiece *p=NULL;
     switch (id) {
-    case 1:
-        p= new chesspiece1;
-        break;
-    case 2:
-        p= new chesspiece2;
-        break;
-    case 3:
-        p= new chesspiece3;
-        break;
-    case 4:
-        p= new chesspiece4;
-        break;
-    case 5:
-        p= new chesspiece5;
-        break;
-    case 6:
-        p= new chesspiece6;
-        break;
-    case 7:
-        p= new chesspiece7;
-        break;
     case 8:
-        p= new chesspiece1;
-        break;
+    case 1: p= new chesspiece1; break;
     case 9:
-        p= new chesspiece2;
-        break;
+    case 2: p= new chesspiece2; break;
     case 10:
-        p= new chesspiece3;
-        break;
+    case 3: p= new chesspiece3; break;
     case 11:
-        p= new chesspiece4;
-        break;
+    case 4: p= new chesspiece4; break;
     case 12:
-        p= new chesspiece5;
-        break;
+    case 5: p= new chesspiece5; break;
     case 13:
-        p= new chesspiece6;
-        break;
+    case 6: p= new chesspiece6; break;
     case 14:
-        p= new chesspiece7;
-        break;
+    case 7: p= new chesspiece7; break;
     }
     return p;
 }
@@ -226,18 +184,18 @@ void ChessBoard::mousePressEvent(QMouseEvent *event){
     SearchEngine ai;
     int real_x=event->x(),real_y=event->y();
     int board_y=(real_x-start_x)/57,board_x=(real_y-start_y)/57;
+
     if(flag==1&&pieces[board_x][board_y]!=selected_piece){
         if(move(selected_piece,board_x,board_y)){
             unlock();
             if(ai.isGameover(*this)){ init(); update(); return ; }
-            moveway move1=ai.aimode(*this,5);
-            move(pieces[move1.from_x][move1.from_y],move1.to_x,move1.to_y);
+            moveway bestmove=ai.aimode(*this,5);
+            move(pieces[bestmove.from_x][bestmove.from_y],bestmove.to_x,bestmove.to_y);
             if(ai.isGameover(*this)){ init(); update(); return ; }
         }
         return ;
     }else if(board[board_x][board_y]>0&&pieces[board_x][board_y]->color==BLACK){
         if(board[board_x][board_y]<=14) {
-            //if(pieces[board_x][board_y]->color!=priority) return ;
             board[board_x][board_y]+=14;
             lock(pieces[board_x][board_y]);
         }else if(board[board_x][board_y]>14) {

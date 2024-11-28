@@ -64,15 +64,16 @@ void chesspiece4::generate_move(std::vector<moveway>&move,ChessBoard& w){
     for(int i=0;i<4;i++){
         int dx=this->x+dir[i][0];
         int dy=this->y+dir[i][1];
+        bool hasblock=false;
         while (Canmove(w,dx,dy)) {
-            chessmove::moveadd(move,x,y,dx,dy);
-            dx+=dir[i][0];
-            dy+=dir[i][1];
-        }
-        dx+=dir[i][0];
-        dy+=dir[i][1];
-        while (Canmove(w,dx,dy)) {
-            chessmove::moveadd(move,x,y,dx,dy);
+            if(w.board[dx][dy]){
+                if(!hasblock){
+                    hasblock=true;
+                }else{
+                    chessmove::moveadd(move,x,y,dx,dy);
+                    break;
+                }
+            }
             dx+=dir[i][0];
             dy+=dir[i][1];
         }

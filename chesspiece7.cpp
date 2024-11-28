@@ -43,6 +43,6 @@ void chesspiece7::generate_move(std::vector<moveway>& move,ChessBoard &w){
     for(int i=0;i<4;i++){
         int dx=this->x+dir[i][0];
         int dy=this->y+dir[i][1];
-        if(Canmove(w,dx,dx)) chessmove::moveadd(move,x,y,dx,dy);
+        if(Canmove(w,dx,dy)) chessmove::moveadd(move,x,y,dx,dy);
     }
 }

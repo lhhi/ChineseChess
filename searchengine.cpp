@@ -9,27 +9,32 @@
 SearchEngine::SearchEngine() {}
 
 void SearchEngine::addpiece(ChessBoard& w,int id,int x,int y,int turn){
-    if(id<=7) w.redvalue+=positionvalue[id][x][y]+(!turn)*3;
-    else       w.blackvalue+=positionvalue[id][x][y]+turn*3;
+    if(id<=7) w.redvalue+=values[id]+positionvalue[id][x][y]+(!turn)*3;
+    else       w.blackvalue+=values[id]+positionvalue[id][x][y]+turn*3;
 }
 
 void SearchEngine::delpiece(ChessBoard& w,int id,int x,int y,int turn){
-    if(id<=7) w.redvalue-=positionvalue[id][x][y]-(!turn)*3;
-    else      w.blackvalue-=positionvalue[id][x][y]-turn*3;
+    if(id<=7) w.redvalue-=(values[id]+positionvalue[id][x][y]+(!turn)*3);
+    else      w.blackvalue-=(values[id]+positionvalue[id][x][y]+turn*3);
 }
 
-Chesspiece* SearchEngine::Makemove(ChessBoard& w,moveway& move){
+Chesspiece* SearchEngine::Makemove(ChessBoard& w,moveway& move,int turn){
     Chesspiece *p=w.pieces[move.to_x][move.to_y];
+    int id=w.board[move.from_x][move.from_y];
     w.board[move.to_x][move.to_y]=w.board[move.from_x][move.from_y];
     w.pieces[move.to_x][move.to_y]=w.pieces[move.from_x][move.from_y];
     w.pieces[move.to_x][move.to_y]->x = move.to_x;
     w.pieces[move.to_x][move.to_y]->y = move.to_y;
     w.board[move.from_x][move.from_y]=0;
     w.pieces[move.from_x][move.from_y]=NULL;
+    delpiece(w,id,move.from_x,move.from_y,turn);
+    addpiece(w,id,move.to_x,move.to_y,turn);
+    if(p) delpiece(w,p->id,move.to_x,move.to_y,turn);
     return p;
 }
 
-void SearchEngine::Unmakemove(ChessBoard& w,moveway& move,Chesspiece *p){
+void SearchEngine::Unmakemove(ChessBoard& w,moveway& move,Chesspiece *p,int turn){
+    int id=w.board[move.to_x][move.to_y];
     w.board[move.from_x][move.from_y]=w.board[move.to_x][move.to_y];
     w.pieces[move.from_x][move.from_y]=w.pieces[move.to_x][move.to_y];
     w.pieces[move.from_x][move.from_y]->x = move.from_x;
@@ -42,6 +47,9 @@ void SearchEngine::Unmakemove(ChessBoard& w,moveway& move,Chesspiece *p){
         w.board[move.to_x][move.to_y]=0;
         w.pieces[move.to_x][move.to_y]=NULL;
     }
+    delpiece(w,id,move.to_x,move.to_y,turn);
+    addpiece(w,id,move.from_x,move.from_y,turn);
+    if(p) addpiece(w,p->id,move.to_x,move.to_y,turn);
 }
 
 bool SearchEngine::isGameover(ChessBoard& w){
@@ -73,19 +81,21 @@ int SearchEngine::evaluate(ChessBoard &w,int turn){
             else blackvalue+=values[id]+positionvalue[id][i][j];
         }
     }
+    w.redvalue=redvalue;
+    w.blackvalue=blackvalue;
     return redvalue-blackvalue;
 }
 
 int SearchEngine::search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
-    if(deep==0||isGameover(w)) return evaluate(w,!isMAX);
+    if(deep==0||isGameover(w)) return w.redvalue-w.blackvalue;
     std::vector<moveway> movelist=chessmove::createpossiblemove(w,!isMAX);
-    if(movelist.empty()) return evaluate(w,!isMAX);
+    if(movelist.empty()) return w.redvalue-w.blackvalue;
     if(isMAX){
         int maxEval=INT_MIN;
         for(moveway move:movelist){
-            Chesspiece*p=Makemove(w,move);
+            Chesspiece*p=Makemove(w,move,!isMAX);
             int eval=search(w,deep-1,alpha,beta,false);
-            Unmakemove(w,move,p);
+            Unmakemove(w,move,p,!isMAX);
             maxEval=std::max(maxEval,eval);
             alpha=std::max(eval,alpha);
             if(beta<=alpha) break;
@@ -94,9 +104,9 @@ int SearchEngine::search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
     }else{
         int minEval=INT_MAX;
         for(moveway move:movelist){
-            Chesspiece*p=Makemove(w,move);
+            Chesspiece*p=Makemove(w,move,!isMAX);
             int eval=search(w,deep-1,alpha,beta,true);
-            Unmakemove(w,move,p);
+            Unmakemove(w,move,p,!isMAX);
             minEval=std::min(minEval,eval);
             beta=std::min(eval,beta);
             if(beta<=alpha) break;
@@ -108,11 +118,12 @@ int SearchEngine::search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
 moveway SearchEngine::aimode(ChessBoard& w,int deep){
     int bestscore=INT_MIN;
     moveway bestmove;
+    evaluate(w,RED);
     std::vector<moveway> moves=chessmove::createpossiblemove(w,RED);
     for(moveway move:moves){
-        Chesspiece* p=Makemove(w,move);
+        Chesspiece* p=Makemove(w,move,RED);
         int score=search(w,deep-1,INT_MIN,INT_MAX,false);
-        Unmakemove(w,move,p);
+        Unmakemove(w,move,p,RED);
         if(score>bestscore){
             bestscore=score;
             bestmove=move;

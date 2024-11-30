@@ -8,8 +8,8 @@ class SearchEngine
 {
 public:
     SearchEngine();
-    Chesspiece *Makemove(ChessBoard&,moveway& move);
-    void Unmakemove(ChessBoard&,moveway& move,Chesspiece*);
+    Chesspiece *Makemove(ChessBoard&,moveway& move,int);
+    void Unmakemove(ChessBoard&,moveway& move,Chesspiece*,int);
     bool isGameover(ChessBoard&);
     int evaluate(ChessBoard&,int);
     int search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX);

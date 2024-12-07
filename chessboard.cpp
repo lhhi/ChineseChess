@@ -18,6 +18,7 @@ ChessBoard::ChessBoard(QWidget *parent)
 {
     this->resize(530,600);//设置显示区域的大小
     init();//初始化棋盘
+    ai=new SearchEngine();
 }
 
 void ChessBoard::init(){
@@ -181,16 +182,15 @@ void ChessBoard::drawChess(QPainter &painter){
 
 //鼠标点击事件
 void ChessBoard::mousePressEvent(QMouseEvent *event){
-    SearchEngine ai;
     int real_x=event->x(),real_y=event->y();
     int board_y=(real_x-start_x)/57,board_x=(real_y-start_y)/57;
     if(flag==1&&pieces[board_x][board_y]!=selected_piece){
         if(move(selected_piece,board_x,board_y)){
             unlock();
-            if(ai.isGameover(*this)){ init(); update(); return ; }
-            moveway bestmove=ai.aimode(*this,4,-20000,2000,true);
+            if(ai->isGameover(*this)){ init(); update(); return ; }
+            moveway bestmove=ai->aimode(*this,3,-20000,20000,true);
             move(pieces[bestmove.from_x][bestmove.from_y],bestmove.to_x,bestmove.to_y);
-            if(ai.isGameover(*this)){ init(); update(); return ; }
+            if(ai->isGameover(*this)){ init(); update(); return ; }
         }
         return ;
     }else if(board[board_x][board_y]>0&&pieces[board_x][board_y]->color==BLACK){

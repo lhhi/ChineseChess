@@ -4,6 +4,7 @@
 #define RED 0
 #define BLACK 1
 const static int radius=28;
+class SearchEngine;
 class Chesspiece;//前向声明
 class ChessBoard : public QMainWindow
 {
@@ -39,6 +40,7 @@ public:
     void init();//初始化函数
     inline void lock(Chesspiece *);
     inline void unlock();
+    SearchEngine *ai;
 signals:
 };
 

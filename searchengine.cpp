@@ -1,11 +1,12 @@
 #include "searchengine.h"
 #include"chessboard.h"
 #include"chesspiece.h"
+#include"hashtable.h"
 #include<cmath>
 #include<vector>
 #define RED 0
 #define BLACK 1
-
+#define UNVALID 66666
 SearchEngine::SearchEngine() {}
 
 Chesspiece* SearchEngine::Makemove(ChessBoard& w,moveway& move,int turn){
@@ -54,13 +55,22 @@ bool SearchEngine::isGameover(ChessBoard& w){
 }
 
 int SearchEngine::search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
-    if (isGameover(w)) return(ISREDWIN==isMAX)?20000:-20000;
-    if(deep==0) return Evalute::evalute(w,!isMAX);
+    int score=hash.query(deep,isMAX);
+    if(score!=UNVALID) return score;
+    if (isGameover(w)) return isMAX?(ISREDWIN?20000:-20000):(ISREDWIN?-20000:20000);
+    if(deep==0){
+        score=Evalute::evalute(w,!isMAX);
+        hash.insert(score,deep,isMAX);
+        return score;
+    }
     std::vector<moveway> movelist=chessmove::createpossiblemove(w,!isMAX);
     if(movelist.empty()) return Evalute::evalute(w,!isMAX);
     for(moveway move:movelist){
+        int target=hash.makehash(w,move);
         Chesspiece*p=Makemove(w,move,!isMAX);
-        int eval=-search(w,deep-1,-beta,-alpha,!isMAX);
+        int eval=-PVSsearch(w,deep-1,-beta,-alpha,!isMAX);
+        hash.insert(eval,deep,isMAX);
+        hash.unmakehash(w,move,target);
         Unmakemove(w,move,p,!isMAX);
         alpha=std::max(eval,alpha);
         if(beta<=alpha) break;
@@ -73,7 +83,7 @@ moveway SearchEngine::aimode(ChessBoard& w,int deep,int alpha,int beta,bool isMA
     moveway bestmove;
     for(moveway move:movelist){
         Chesspiece*p=Makemove(w,move,!isMAX);
-        int eval=-search1(w,deep-1,-beta,-alpha,!isMAX);
+        int eval=-search(w,deep-1,-beta,-alpha,!isMAX);
         Unmakemove(w,move,p,!isMAX);
         if(eval>alpha){
             alpha=eval;
@@ -84,22 +94,22 @@ moveway SearchEngine::aimode(ChessBoard& w,int deep,int alpha,int beta,bool isMA
     return bestmove;
 }
 
-int SearchEngine::search1(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
-    if (isGameover(w)) return(ISREDWIN==isMAX)?20000:-20000;
+int SearchEngine::PVSsearch(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
+    if (isGameover(w)) return isMAX?(ISREDWIN?20000:-20000):(ISREDWIN?-20000:20000);
     if(deep==0) return Evalute::evalute(w,!isMAX);
     std::vector<moveway> movelist=chessmove::createpossiblemove(w,!isMAX);
     if(movelist.empty()) return Evalute::evalute(w,!isMAX);
-    int bestEval=-20000;
+    int bestEval=-20000,score;
     Chesspiece*p=Makemove(w,movelist[0],!isMAX);
-    bestEval=-search1(w,deep-1,-beta,-alpha,!isMAX);
+    bestEval=-PVSsearch(w,deep-1,-beta,-alpha,!isMAX);
     Unmakemove(w,movelist[0],p,!isMAX);
-    for(int i=1;i<movelist.size();i++){
+    for(int i=1;i<(int)movelist.size();i++){
         if(bestEval<beta){
             if(bestEval>alpha) alpha=bestEval;
             Chesspiece* p=Makemove(w,movelist[i],!isMAX);
-            int score=-search1(w,deep-1,-alpha-1,-alpha,!isMAX);
+            score=-PVSsearch(w,deep-1,-alpha-1,-alpha,!isMAX);
             if(score>alpha&&score<beta){
-                bestEval=-search1(w,deep-1,-beta,-score,!isMAX);
+                bestEval=-PVSsearch(w,deep-1,-beta,-score,!isMAX);
             }else if(score>bestEval){
                 bestEval=score;
             }

@@ -10,6 +10,7 @@ SOURCES += \
     chesspiece6.cpp \
     chesspiece7.cpp \
     evalute.cpp \
+    hashtable.cpp \
     main.cpp \
     negmaxengine.cpp \
     searchengine.cpp
@@ -26,6 +27,7 @@ HEADERS += \
     chesspiece6.h \
     chesspiece7.h \
     evalute.h \
+    hashtable.h \
     negmaxengine.h \
     searchengine.h
 

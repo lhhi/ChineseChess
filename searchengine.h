@@ -4,6 +4,7 @@ class ChessBoard;
 class Chesspiece;
 #include"chessmove.h"
 #include"evalute.h"
+#include"hashtable.h"
 
 class SearchEngine
 {
@@ -15,10 +16,12 @@ public:
     bool isGameover(ChessBoard&);
     int evaluate(ChessBoard&,int);
     int search(ChessBoard& w,int deep,int alpha,int beta,bool isMAX);
-    int search1(ChessBoard& w,int deep,int alpha,int beta,bool isMAX);
+    int PVSsearch(ChessBoard& w,int deep,int alpha,int beta,bool isMAX);
     moveway aimode(ChessBoard& w,int deep,int,int,bool);
     void addpiece(ChessBoard& w,int id,int x,int y,int turn);
     void delpiece(ChessBoard& w,int id,int x,int y,int turn);
+    Hashtable hash;
+    int timeout=0;
 };
 
 #endif // SEARCHENGINE_H

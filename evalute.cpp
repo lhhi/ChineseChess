@@ -99,8 +99,7 @@ int Evalute::evalute(ChessBoard& w,int turn){
                 }
             }
         }
-    }//
-
+    }
     int redvalue=0,blackvalue=0;
     for(int i=0;i<10;i++){
         for(int j=0;j<9;j++){
@@ -110,6 +109,6 @@ int Evalute::evalute(ChessBoard& w,int turn){
             else blackvalue+=chessval[i][j];
         }
     }
-    if(turn==RED)  return redvalue-blackvalue;
-    if(turn==BLACK)return blackvalue-redvalue;
+    if(turn==0)  return redvalue-blackvalue;
+    if(turn==1)  return blackvalue-redvalue;
 }

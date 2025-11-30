@@ -74,6 +74,7 @@ moveway SearchEngine::aimode(ChessBoard& w,int deep,int alpha,int beta,bool isMA
     for(moveway move:movelist){
         Chesspiece*p=Makemove(w,move);
         int eval=-search(w,deep-1,-beta,-alpha,!isMAX);
+        //int eval=-PVSsearch(w,deep-1,-beta,-alpha,!isMAX);
         Unmakemove(w,move,p);
         if(eval>alpha){
             alpha=eval;
@@ -81,12 +82,11 @@ moveway SearchEngine::aimode(ChessBoard& w,int deep,int alpha,int beta,bool isMA
         }
         if(beta<=alpha) break;
     }
-    //qDebug()<<bestmove.from_x<<bestmove.from_y<<bestmove.to_x<<bestmove.to_y<<alpha;
     return bestmove;
 }
 
 int SearchEngine::PVSsearch(ChessBoard& w,int deep,int alpha,int beta,bool isMAX){
-    if (isGameover(w)) return isMAX?(ISREDWIN?20000:-20000):(ISREDWIN?-20000:20000);
+    if (isGameover(w)) return isMAX?(ISREDWIN?19990+2*deep:-19990-2*deep):(ISREDWIN?-19990-2*deep:19990+2*deep);
     if(deep==0) return Evalute::evalute(w,!isMAX);
     std::vector<moveway> movelist=chessmove::createpossiblemove(w,!isMAX);
     if(movelist.empty()) return Evalute::evalute(w,!isMAX);

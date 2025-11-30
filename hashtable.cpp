@@ -89,17 +89,3 @@ void Hashtable::insert(int eval,int deep,bool isMAX){
     hash->deep=deep;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

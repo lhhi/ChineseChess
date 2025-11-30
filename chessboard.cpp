@@ -21,6 +21,7 @@ ChessBoard::ChessBoard(QWidget *parent)
 }
 
 void ChessBoard::init(){
+    ai_pre=true;
     for(int i=0;i<10;i++)
     for(int j=0;j<9;j++)
     board[i][j]=board_1[i][j];
@@ -88,88 +89,88 @@ void ChessBoard::drawChess(QPainter &painter){
             if(board[i][j]>0){
                 //1-7 为红 8-14为黑
                 switch (board[i][j]) {
-                case 1:
+                case 8:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RK.GIF"));
                     break;
-                case 2:
+                case 9:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RR.GIF"));
                     break;
-                case 3:
+                case 10:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RN.GIF"));
                     break;
-                case 4:
+                case 11:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RC.GIF"));
                     break;
-                case 5:
+                case 12:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RA.GIF"));
                     break;
-                case 6:
+                case 13:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RB.GIF"));
                     break;
-                case 7:
+                case 14:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RP.GIF"));
                     break;
-                case 8:
+                case 1:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BK.GIF"));
                     break;
-                case 9:
+                case 2:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BR.GIF"));
                     break;
-                case 10:
+                case 3:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BN.GIF"));
                     break;
-                case 11:
+                case 4:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BC.GIF"));
                     break;
-                case 12:
+                case 5:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BA.GIF"));
                     break;
-                case 13:
+                case 6:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BB.GIF"));
                     break;
-                case 14:
+                case 7:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BP.GIF"));
                     break;
-                case 15:
+                case 22:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RKS.GIF"));
                     break;
-                case 16:
+                case 23:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RRS.GIF"));
                     break;
-                case 17:
+                case 24:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RNS.GIF"));
                     break;
-                case 18:
+                case 25:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RCS.GIF"));
                     break;
-                case 19:
+                case 26:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RAS.GIF"));
                     break;
-                case 20:
+                case 27:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RBS.GIF"));
                     break;
-                case 21:
+                case 28:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/RPS.GIF"));
                     break;
-                case 22:
+                case 15:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BKS.GIF"));
                     break;
-                case 23:
+                case 16:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BRS.GIF"));
                     break;
-                case 24:
+                case 17:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BNS.GIF"));
                     break;
-                case 25:
+                case 18:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BCS.GIF"));
                     break;
-                case 26:
+                case 19:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BAS.GIF"));
                     break;
-                case 27:
+                case 20:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BBS.GIF"));
                     break;
-                case 28:
+                case 21:
                     painter.drawPixmap(x,y,radius*2,radius*2,QPixmap(QDir::currentPath()+"/images/WOOD/BPS.GIF"));
                     break;
 
@@ -184,22 +185,28 @@ void ChessBoard::mousePressEvent(QMouseEvent *event){
     SearchEngine ai;
     int real_x=event->x(),real_y=event->y();
     int board_y=(real_x-start_x)/57,board_x=(real_y-start_y)/57;
-    if(flag==1&&pieces[board_x][board_y]!=selected_piece){
-        if(move(selected_piece,board_x,board_y)){
-            unlock();
-            if(ai.isGameover(*this)){ init(); update(); return ; }
-            moveway bestmove=ai.aimode(*this,3,-20000,20000,true);
-            move(pieces[bestmove.from_x][bestmove.from_y],bestmove.to_x,bestmove.to_y);
-            if(ai.isGameover(*this)){ init(); update(); return ; }
-        }
-        return ;
-    }else if(board[board_x][board_y]>0&&pieces[board_x][board_y]->color==BLACK){
-        if(board[board_x][board_y]<=14) {
-            board[board_x][board_y]+=14;
-            lock(pieces[board_x][board_y]);
-        }else if(board[board_x][board_y]>14) {
-            board[board_x][board_y]-=14;
-            unlock();
+    if(ai_pre){
+        moveway bestmove=ai.aimode(*this,3,-20000,20000,true);
+        move(pieces[bestmove.from_x][bestmove.from_y],bestmove.to_x,bestmove.to_y);
+        ai_pre=false;
+    }else{
+        if(flag==1&&pieces[board_x][board_y]!=selected_piece){
+            if(move(selected_piece,board_x,board_y)){
+                unlock();
+                if(ai.isGameover(*this)){ init(); update(); return ; }
+                moveway bestmove=ai.aimode(*this,3,-20000,20000,true);
+                move(pieces[bestmove.from_x][bestmove.from_y],bestmove.to_x,bestmove.to_y);
+                if(ai.isGameover(*this)){ init(); update(); return ; }
+            }
+            return ;
+        }else if(board[board_x][board_y]>0&&pieces[board_x][board_y]->color==BLACK){
+            if(board[board_x][board_y]<=14) {
+                board[board_x][board_y]+=14;
+                lock(pieces[board_x][board_y]);
+            }else if(board[board_x][board_y]>14) {
+                board[board_x][board_y]-=14;
+                unlock();
+            }
         }
     }
     update();

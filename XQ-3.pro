@@ -1,3 +1,4 @@
+RC_ICONS =F:\qtonline\XQ-3\build\Desktop_Qt_6_8_0_MinGW_64_bit-Release\images\ChineseChess.ico
 SOURCES += \
     chessboard.cpp \
     chessmove.cpp \

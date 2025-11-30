@@ -9,7 +9,7 @@ static int unattack[10][9];
 static int unguared[10][9];
 static int chessval[10][9];
 static int positval[10][9];
-static int values[15]={0,10000,500,350,450,250,250,100,10000,500,350,450,250,250,100};
+static int values[15]={0,10000,500,350,400,250,250,100,10000,500,350,400,250,250,100};
 static int mobilityvalues[15]={0,0,6,12,6,1,1,15,0,6,12,6,1,1,15};
 static int positionvalue[2][10][9]={
     {{0,0,0,0,0,0,0,0,0},

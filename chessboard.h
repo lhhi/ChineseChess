@@ -39,6 +39,7 @@ public:
     int flag,priority;//决定先手和棋子选择的变量
     Chesspiece *selected_piece;//当前被选中的棋子
     int start_x=4,start_y=26;//棋盘的开始坐标
+    bool ai_pre=true;
 signals:
 };
 
